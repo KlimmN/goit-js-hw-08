@@ -8,14 +8,14 @@ body {
 .gallery {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    /* 👈 фиксировано 3 колонки */
+  
     gap: 24px;
-    /* расстояние между картинками */
+  
     list-style: none;
     padding: 0;
     margin: 0 auto;
     max-width: 1200px;
-    /* 👈 чтобы галерея была по центру */
+ 
 }
 
 .gallery-item {
