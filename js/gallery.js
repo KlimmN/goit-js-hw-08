@@ -64,50 +64,50 @@ const images = [
   },
 ];
 
-const galleryRef = document.querySelector('.gallery');
+// 1️⃣ Створюємо розмітку галереї
+const gallery = document.querySelector('.gallery');
+const galleryMarkup = images
+  .map(
+    ({ preview, original, description }) => `
+    <li class="gallery-item">
+      <a class="gallery-link" href="${original}">
+        <img
+          class="gallery-image"
+          src="${preview}"
+          data-source="${original}"
+          alt="${description}"
+        />
+      </a>
+    </li>
+  `
+  )
+  .join('');
 
-function imgTemplate(obj) {
-  return `<li class="gallery-item">
-  <a class="gallery-link" href="${obj.original}">
-    <img
-      class="gallery-image"
-      src="${obj.preview}"
-      data-source="${obj.original}"
-      alt="${obj.description}"
-    />
-  </a>
-</li>
-`;
-}
+gallery.insertAdjacentHTML('beforeend', galleryMarkup);
 
-function imagesTemplate(arr) {
-  return arr.map(imgTemplate).join('');
-}
+// 2️⃣ Делегування подій
+gallery.addEventListener('click', onGalleryClick);
 
-const imgMarkup = imagesTemplate(images);
-galleryRef.insertAdjacentHTML('beforeend', imgMarkup);
-
-galleryRef.addEventListener('click', handleClick);
-
-function handleClick(event) {
+function onGalleryClick(event) {
   event.preventDefault();
-  const target = event.target;
-  if (!target.classList.contains('gallery-image')) return;
 
-  const originalUrl = target.dataset.source;
+  const isImage = event.target.classList.contains('gallery-image');
+  if (!isImage) return;
 
+  const largeImageURL = event.target.dataset.source;
+
+  // 3️⃣ Відкриваємо модалку з великим зображенням
   const instance = basicLightbox.create(`
-    <img src="${originalUrl}" width="800" height="auto" alt="${target.alt}">
+    <img src="${largeImageURL}" width="1280" alt="${event.target.alt}">
   `);
 
   instance.show();
 
-  const onEscKeyPress = e => {
-    if (e.key === 'Escape') {
+  // Закриття по Escape
+  document.addEventListener('keydown', function onEsc(event) {
+    if (event.key === 'Escape') {
       instance.close();
-      document.removeEventListener('keydown', onEscKeyPress);
+      document.removeEventListener('keydown', onEsc);
     }
-  };
-
-  document.addEventListener('keydown', onEscKeyPress);
+  });
 }
